@@ -1,89 +1,210 @@
 @import "tailwindcss";
 
-:root {
-  --background: #fff8e9;
-  --foreground: #0b356b;
+/*
+ * Tema da marca (Tailwind v4).
+ * Cada variável --color-* vira classe utilitária automaticamente:
+ *   --color-brand-blue  ->  bg-brand-blue, text-brand-blue, border-brand-blue...
+ * Isso substitui o antigo tailwind.config: no v4 a configuração fica no CSS.
+ */
+@theme {
+  --color-brand-navy: #1e293b;
+  --color-brand-deep: #0a2e5c; /* fundo do hero */
+  --color-brand-ink: #0b356b; /* cor padrão do texto */
+  --color-brand-blue: #124a8a;
+  --color-brand-blue-dark: #0d3566; /* hover do azul */
+  --color-brand-sky: #4fa3d1;
+  --color-brand-coral: #f56a4a;
+  --color-brand-coral-dark: #e05737; /* hover do coral */
+  --color-brand-yellow: #ffb719;
+  --color-brand-cream: #fff8e9;
+  --color-brand-sky-light: #e6f3fc; /* fundos claros, hover do menu */
+  --color-brand-yellow-soft: #ffefc2; /* painéis claros atrás das fotos */
+  --color-brand-coral-soft: #ffe4dc;
 
-  --blue-primary: #124a8a;
-  --blue-light: #4fa3d1;
-  --blue-dark: #0b356b;
+  --color-whatsapp: #25d366;
+  --color-whatsapp-dark: #20ba5a;
 
-  --yellow: #ffb719;
-  --coral: #f56a4a;
+  --animate-slide-down: slide-down 200ms ease-out;
+  --animate-float: float 6s ease-in-out infinite;
 
-  --cream: #fff8e9;
-  --white: #ffffff;
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(-2deg);
+    }
+    50% {
+      transform: translateY(-14px) rotate(2deg);
+    }
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-0.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
-* {
-  box-sizing: border-box;
+/* Liga as fontes carregadas no layout.tsx às classes font-sans e font-display. */
+@theme inline {
+  --font-sans: var(--font-nunito);
+  --font-display: var(--font-nunito);
 }
 
-html {
-  scroll-behavior: smooth;
+/*
+ * Estilos base ficam dentro de @layer base. Assim as classes utilitárias
+ * (text-white, etc.) sempre vencem e não precisamos de "!text-white".
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white font-sans text-brand-ink antialiased;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    @apply bg-brand-yellow text-brand-ink;
+  }
+
+  :focus-visible {
+    @apply outline-3 outline-offset-3 outline-brand-yellow;
+  }
+
+  /* Âncoras (#combos, #contato) param abaixo do menu fixo. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
 }
 
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* -------------------------------------------------------------------------- */
+/* Abertura do site e entrada do conteúdo (veja components/layout/Intro.tsx)  */
+/* -------------------------------------------------------------------------- */
+
+.intro-veil {
+  display: none;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html.intro .intro-veil {
+  display: flex;
 }
 
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
+/* Durante a abertura: sem rolagem e o logo do menu escondido (o da abertura
+   voa até o lugar dele). */
+html.intro {
+  overflow: hidden;
 }
 
-::selection {
-  background: var(--yellow);
-  color: var(--blue-dark);
+html.intro [data-brand-logo] {
+  visibility: hidden;
+  /* Garantia: se a abertura travar por qualquer motivo, o logo aparece em 5s. */
+  animation: intro-fallback-show 0s linear 5s forwards;
 }
 
-/* Scrollbar */
+/* Garantia: o véu da abertura some sozinho em 5s, mesmo sem JavaScript. */
+html.intro .intro-veil {
+  animation: intro-fallback-hide 0.3s ease 5s forwards;
+}
 
+@keyframes intro-fallback-show {
+  to {
+    visibility: visible;
+  }
+}
+
+@keyframes intro-fallback-hide {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* Elementos com "reveal" sobem e aparecem em sequência. Durante a abertura
+   a animação fica pausada e começa quando ela termina. */
+.reveal {
+  animation: reveal-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+html.intro .reveal {
+  animation-play-state: paused;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Elementos com data-reveal aparecem quando entram na tela
+   (components/ui/RevealOnScroll.tsx). Só escondidos se houver JavaScript. */
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+html.js [data-reveal][data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    animation: none;
+  }
+
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Barra de rolagem */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--cream);
+  background: var(--color-brand-cream);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--blue-light);
+  background: var(--color-brand-sky);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--blue-primary);
+  background: var(--color-brand-blue);
 }
 
-/* FAQ */
-
-details summary::-webkit-details-marker {
-  display: none;
-}
-
-details summary {
-  list-style: none;
-}
-
-/* Imagens */
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Acessibilidade */
-
-:focus-visible {
-  outline: 3px solid var(--yellow);
-  outline-offset: 3px;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

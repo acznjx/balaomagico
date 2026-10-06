@@ -1,229 +1,86 @@
 // src/components/home/ContatoRedes.tsx
 
-import type { ReactNode } from "react";
-import { Clock, MapPin, MessageCircle, Phone, Share2 } from "lucide-react";
-import { FacebookIcon, InstagramIcon } from "@/components/icons/BrandIcons";
-
-/* -------------------------------------------------------------------------- */
-/* Tipos                                                                      */
-/* -------------------------------------------------------------------------- */
-
-interface SocialNetwork {
-  readonly label: string;
-  readonly href: string;
-  readonly Icon: (props: { className?: string }) => ReactNode;
-}
-
-interface ContactDetail {
-  readonly text: string;
-  readonly Icon: typeof Clock;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Configuração                                                               */
-/* -------------------------------------------------------------------------- */
-
-const WHATSAPP_NUMBER = "5551992379704";
-const FORMATTED_PHONE = "(51) 99237-9704";
-
-/** Monta o link do WhatsApp já com a mensagem codificada. */
-function whatsappLink(message: string): string {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
-
-const SECTION = {
-  tag: "FALE CONOSCO",
-  title: "Entre em contato e siga nossas redes",
-  subtitle:
-    "Estamos prontos para atender você, tirar dúvidas e garantir a diversão do seu evento.",
-} as const;
-
-const SOCIAL_NETWORKS: readonly SocialNetwork[] = [
-  {
-    label: "Instagram",
-    href: "https://instagram.com/balaomagico_cia",
-    Icon: InstagramIcon,
-  },
-  {
-    // TODO: trocar pela URL real da página no Facebook.
-    label: "Facebook",
-    href: "https://facebook.com",
-    Icon: FacebookIcon,
-  },
-] as const;
-
-const CONTACT_DETAILS: readonly ContactDetail[] = [
-  { text: "Seg. a Sáb.: 08:00 às 20:00", Icon: Clock },
-  { text: FORMATTED_PHONE, Icon: Phone },
-] as const;
+import WhatsappButton from "@/components/ui/WhatsappButton";
+import { CONTACT } from "@/config/site";
+import { WHATSAPP_MESSAGES, whatsappLink } from "@/lib/whatsapp";
 
 /**
- * Paleta da marca, para referência:
- *   azul #124A8A | coral #F56A4A | amarelo #FFB719 | creme #FFF8E9
- *   verde WhatsApp #25D366 (hover #20ba5a)
- *
- * As classes usam os valores literais de propósito: o Tailwind lê as classes
- * como texto no código-fonte e não gera nada montado com template literal.
+ * Seção de contato da home.
+ * Uma frase grande, uma ação principal (WhatsApp) e os canais em colunas,
+ * separados por linhas finas. Sem cartões nem ícones decorativos.
  */
 
-/* -------------------------------------------------------------------------- */
-/* Subcomponentes                                                             */
-/* -------------------------------------------------------------------------- */
-
-function SectionHeader() {
-  return (
-    <div className="mx-auto max-w-2xl space-y-3 text-center">
-      <span className="inline-block rounded-full bg-[#FFB719] px-4 py-1.5 text-xs font-black uppercase tracking-wider text-[#124A8A] shadow-md">
-        {SECTION.tag}
-      </span>
-
-      <h2 className="text-3xl font-black text-white sm:text-4xl">{SECTION.title}</h2>
-
-      <p className="text-sm font-medium text-[#FFF8E9]/90 sm:text-base">{SECTION.subtitle}</p>
-    </div>
-  );
+interface Canal {
+  readonly rotulo: string;
+  readonly valor: string;
+  /** Sem link, o item aparece só como texto. */
+  readonly href?: string;
 }
 
-interface ContactCardProps {
-  icon: ReactNode;
-  /** Cor de fundo do quadrado do ícone, ex.: "bg-[#25D366]". */
-  iconBackground: string;
-  title: string;
-  description: string;
-  /** Conteúdo extra logo abaixo da descrição, dentro do bloco de topo. */
-  children?: ReactNode;
-  /** Rodapé fixado na base do cartão, útil para o botão de ação. */
-  footer?: ReactNode;
-  className?: string;
-}
-
-function ContactCard({
-  icon,
-  iconBackground,
-  title,
-  description,
-  children,
-  footer,
-  className = "",
-}: ContactCardProps) {
-  return (
-    <div
-      className={`flex flex-col justify-between rounded-2xl border border-white/10 bg-white/10 p-6 shadow-xl backdrop-blur-md transition-all hover:bg-white/15 sm:p-8 ${className}`}
-    >
-      <div className="space-y-4">
-        <div
-          className={`flex h-12 w-12 items-center justify-center rounded-xl shadow-lg ${iconBackground}`}
-        >
-          {icon}
-        </div>
-
-        <div>
-          <h3 className="text-lg font-black text-white">{title}</h3>
-          <p className="mt-1 text-xs text-[#FFF8E9]/80 sm:text-sm">{description}</p>
-        </div>
-
-        {children}
-      </div>
-
-      {footer && <div className="mt-6">{footer}</div>}
-    </div>
-  );
-}
-
-function WhatsappCard() {
-  return (
-    <ContactCard
-      icon={<MessageCircle className="h-6 w-6 fill-white text-white" aria-hidden />}
-      iconBackground="bg-[#25D366]"
-      title="WhatsApp direto"
-      description="Atendimento rápido para orçamentos e reservas de datas."
-      footer={
-        <a
-          href={whatsappLink("Olá! Gostaria de tirar dúvidas sobre a locação.")}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-xs font-black tracking-wider !text-white shadow-lg transition-all hover:bg-[#20ba5a] hover:scale-[1.02]"
-        >
-          CHAMAR NO WHATSAPP
-        </a>
-      }
-    />
-  );
-}
-
-function SocialCard() {
-  return (
-    <ContactCard
-      icon={<Share2 className="h-6 w-6 text-[#124A8A]" aria-hidden />}
-      iconBackground="bg-[#FFB719]"
-      title="Redes sociais"
-      description="Acompanhe fotos de festas reais, novidades e feedbacks de clientes."
-      footer={
-        <div className="grid grid-cols-2 gap-3">
-          {SOCIAL_NETWORKS.map(({ label, href, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-xl bg-white/20 py-3 text-xs font-black !text-white shadow-sm transition-all hover:bg-white/30"
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span>{label}</span>
-            </a>
-          ))}
-        </div>
-      }
-    />
-  );
-}
-
-function LocationCard() {
-  return (
-    <ContactCard
-      className="md:col-span-2 lg:col-span-1"
-      icon={<MapPin className="h-6 w-6 text-white" aria-hidden />}
-      iconBackground="bg-[#F56A4A]"
-      title="Atendimento local"
-      description="Atendemos Sapiranga - RS e cidades vizinhas com frete super facilitado."
-      footer={
-        <div className="border-t border-white/10 pt-3 text-center text-[11px] font-extrabold uppercase tracking-wider text-[#FFB719]">
-          Monte seu orçamento sem compromisso
-        </div>
-      }
-    >
-      <ul className="space-y-2.5 border-t border-white/10 pt-3 text-xs font-medium text-[#FFF8E9]/90 sm:text-sm">
-        {CONTACT_DETAILS.map(({ text, Icon }) => (
-          <li key={text} className="flex items-center gap-2.5">
-            <Icon className="h-4 w-4 shrink-0 text-[#FFB719]" aria-hidden />
-            <span>{text}</span>
-          </li>
-        ))}
-      </ul>
-    </ContactCard>
-  );
-}
-
-/* -------------------------------------------------------------------------- */
-/* Componente principal                                                       */
-/* -------------------------------------------------------------------------- */
+/** Canais exibidos. O Facebook só entra quando a URL estiver preenchida. */
+const CANAIS: readonly Canal[] = [
+  { rotulo: "WhatsApp", valor: CONTACT.formattedPhone, href: whatsappLink() },
+  { rotulo: "Instagram", valor: CONTACT.instagramUser, href: CONTACT.instagramUrl },
+  ...(CONTACT.facebookUrl ? [{ rotulo: "Facebook", valor: "Balão Mágico", href: CONTACT.facebookUrl }] : []),
+  { rotulo: "Atendimento", valor: CONTACT.serviceArea },
+];
 
 export default function ContatoRedes() {
   return (
-    <section
-      id="contato"
-      className="relative overflow-hidden bg-[#124A8A] py-16 text-white lg:py-24"
-    >
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#FFB719]/10 blur-3xl" />
+    <section id="contato" className="relative bg-brand-blue text-white">
+      {/* Curva suave abrindo a seção (a anterior é branca), espelhando o hero */}
+      <svg
+        className="absolute inset-x-0 -top-px h-[clamp(28px,5vw,64px)] w-full text-white"
+        viewBox="0 0 1440 64"
+        preserveAspectRatio="none"
+        aria-hidden
+      >
+        <path d="M0 0 V24 C 360 64 1080 64 1440 24 V0 Z" fill="currentColor" />
+      </svg>
 
-      <div className="relative mx-auto max-w-[1300px] space-y-12 px-4 sm:px-6 lg:px-8">
-        <SectionHeader />
+      <div className="mx-auto max-w-[1200px] px-4 pb-16 pt-[clamp(5.5rem,4rem+6vw,9rem)] sm:px-6 lg:pb-24">
+        <div data-reveal className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end lg:gap-16">
+          <h2 className="text-balance text-[clamp(2.25rem,1.3rem+4vw,4.5rem)] font-black leading-[1] tracking-tight">
+            Vamos montar a sua festa?
+          </h2>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <WhatsappCard />
-          <SocialCard />
-          <LocationCard />
+          <div className="lg:pb-2">
+            <p className="max-w-md text-[clamp(1rem,0.95rem+0.3vw,1.15rem)] leading-relaxed text-white/75">
+              Consulte datas, tire dúvidas e receba o seu orçamento pelo WhatsApp.
+            </p>
+            <WhatsappButton
+              message={WHATSAPP_MESSAGES.duvidas}
+              className="mt-6 h-14 w-full whitespace-nowrap rounded-full px-8 text-base font-extrabold sm:inline-flex sm:w-auto"
+            >
+              Chamar no WhatsApp
+            </WhatsappButton>
+          </div>
         </div>
+
+        <dl
+          data-reveal
+          className="mt-14 grid border-t border-white/20 [--reveal-delay:120ms] sm:grid-cols-2 lg:mt-20 lg:grid-cols-none lg:grid-flow-col lg:auto-cols-fr"
+        >
+          {CANAIS.map(({ rotulo, valor, href }) => (
+            <div key={rotulo} className="border-b border-white/20 py-6 sm:pr-8 lg:border-b-0">
+              <dt className="text-sm font-semibold text-white/55">{rotulo}</dt>
+              <dd className="mt-2 text-lg font-extrabold sm:text-xl">
+                {href ? (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline decoration-white/0 decoration-2 underline-offset-[6px] transition-colors hover:decoration-brand-yellow"
+                  >
+                    {valor}
+                  </a>
+                ) : (
+                  valor
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </section>
   );

@@ -1,14 +1,15 @@
-import Navbar from "@/components/layout/Navbar";
-import Hero from "@/components/home/Hero";
+// src/app/page.tsx
+
 import BrinquedosDestaque from "@/components/home/BrinquedosDestaque";
-import ContatoRedes from "@/components/home/ContatoRedes"; 
-export default function Page() {
+import ContatoRedes from "@/components/home/ContatoRedes";
+import Hero from "@/components/home/Hero";
+
+export default function HomePage() {
   return (
-    <main className="min-h-screen bg-white">
-      <Navbar />
+    <>
       <Hero />
       <BrinquedosDestaque />
-      <ContatoRedes /> 
-    </main>
+      <ContatoRedes />
+    </>
   );
 }
