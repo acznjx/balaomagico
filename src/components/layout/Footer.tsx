@@ -19,6 +19,12 @@ const LINKS_CATALOGO = [
   { label: "Consultar frete", href: whatsappLink(WHATSAPP_MESSAGES.frete) },
 ] as const;
 
+/** Páginas legais, na linha final do rodapé. */
+const LINKS_LEGAIS = [
+  { label: "Política de privacidade", href: "/privacidade" },
+  { label: "Política de cookies", href: "/privacidade#cookies" },
+] as const;
+
 /** Redes sociais. O Facebook só aparece quando a URL estiver preenchida. */
 const REDES = [
   { label: "WhatsApp", href: whatsappLink(), Icon: MessageCircle },
@@ -142,10 +148,19 @@ export default function Footer() {
 
       {/* Linha final */}
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-[1200px] flex-col-reverse items-center justify-between gap-4 px-4 py-6 text-sm text-white/50 sm:flex-row sm:px-6">
+        <div className="mx-auto flex max-w-[1200px] flex-col-reverse items-center justify-between gap-4 px-4 py-6 text-center text-sm text-white/50 md:flex-row md:text-left sm:px-6">
           <p>
             © {year} {SITE.name} · {SITE.tagline}
           </p>
+          <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            {LINKS_LEGAIS.map(({ label, href }) => (
+              <li key={href}>
+                <Link href={href} className="transition-colors hover:text-white">
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
           <a href="#" className="group flex items-center gap-2 transition-colors hover:text-white">
             Voltar ao topo
             <ArrowUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" aria-hidden />

@@ -42,6 +42,7 @@ src/
 │   ├── layout.tsx              # Layout raiz: fonte, metadados, menu, rodapé
 │   ├── page.tsx                # Home (/)
 │   ├── catalogo/page.tsx       # Combos e preços (/catalogo)
+│   ├── privacidade/page.tsx    # Política de privacidade e cookies (/privacidade)
 │   ├── not-found.tsx           # Página 404
 │   ├── sitemap.ts / robots.ts  # /sitemap.xml e /robots.txt
 │   ├── icon.png, apple-icon.png, favicon.ico
@@ -84,6 +85,7 @@ src/
 | Ativar o Facebook                    | Preencha `facebookUrl` em `src/config/site.ts`           |
 | Trocar a foto de um brinquedo        | PNG **sem fundo** em `public/images/brinquedos/`, depois ajuste `imagem` |
 | Mudar uma cor da marca               | Bloco `@theme` em `src/app/globals.css`                  |
+| Atualizar a política de privacidade | `src/app/privacidade/page.tsx` (mude também `ATUALIZADO_EM`) |
 | Adicionar uma página ao menu         | `src/config/navigation.ts` e `src/app/sitemap.ts`        |
 
 ### Imagens

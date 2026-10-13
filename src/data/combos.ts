@@ -13,8 +13,9 @@ export interface Combo {
   /** Valor do combo, em reais. */
   readonly preco: number;
   /**
-   * Fotos recortadas (PNG sem fundo) dos brinquedos do combo, até duas.
-   * A primeira fica à esquerda e a segunda à frente, à direita.
+   * Fotos recortadas (PNG sem fundo) dos brinquedos do combo, até três.
+   * A primeira fica à esquerda, a segunda à direita e a terceira (se houver)
+   * menor, na frente e no centro.
    */
   readonly fotos: readonly string[];
   /** Tempo de festa incluso, quando definido. */
@@ -66,7 +67,7 @@ export const COMBOS = [
     itens: ["Super tobogã", "Piscina de bolinhas", "Cama elástica"],
     descricao: "O pacote completo de diversão para festas inesquecíveis.",
     preco: 455,
-    fotos: [FOTO.superToboga, FOTO.piscina],
+    fotos: [FOTO.superToboga, FOTO.camaElastica, FOTO.piscina],
     selo: "Mais vendido",
     destaque: true,
   },

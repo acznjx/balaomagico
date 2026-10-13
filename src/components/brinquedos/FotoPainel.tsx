@@ -4,7 +4,7 @@ import Image from "next/image";
 
 /**
  * Painel colorido com as fotos recortadas dos brinquedos, no mesmo estilo do
- * hero. Usado nos cards da vitrine (1 foto) e dos combos (até 2 fotos).
+ * hero. Usado nos cards da vitrine (1 foto) e dos combos (até 3 fotos).
  */
 
 export const CORES_PAINEL = ["bg-brand-yellow-soft", "bg-brand-sky-light", "bg-brand-coral-soft"] as const;
@@ -41,7 +41,7 @@ interface FotoPainelProps {
 }
 
 export default function FotoPainel({ fotos, cor, nome, selo, seloDestaque, sizes, className = "" }: FotoPainelProps) {
-  const [principal, segunda] = fotos;
+  const [principal, segunda, terceira] = fotos;
 
   return (
     <div className={`relative overflow-hidden rounded-2xl ${cor} ${className}`}>
@@ -52,7 +52,33 @@ export default function FotoPainel({ fotos, cor, nome, selo, seloDestaque, sizes
         <>
           <div className="absolute inset-x-[12%] bottom-[9%] h-[7%] rounded-[50%] bg-brand-blue/15 blur-md" aria-hidden />
 
-          {segunda ? (
+          {terceira && segunda ? (
+            // Três fotos: a primeira à esquerda, a segunda atrás à direita e a
+            // terceira, menor, na frente e no centro.
+            <>
+              <Image
+                src={principal.src}
+                alt={principal.alt}
+                {...dimensoes(principal.src)}
+                sizes={sizes}
+                className="absolute bottom-[12%] left-[3%] h-[72%] w-auto max-w-[54%] object-contain object-bottom transition-transform duration-500 ease-out group-hover:-translate-y-1.5"
+              />
+              <Image
+                src={segunda.src}
+                alt={segunda.alt}
+                {...dimensoes(segunda.src)}
+                sizes={sizes}
+                className="absolute bottom-[14%] right-[3%] h-[56%] w-auto max-w-[50%] object-contain object-bottom transition-transform delay-75 duration-500 ease-out group-hover:-translate-y-1.5"
+              />
+              <Image
+                src={terceira.src}
+                alt={terceira.alt}
+                {...dimensoes(terceira.src)}
+                sizes={sizes}
+                className="absolute bottom-[6%] left-1/2 z-10 h-[42%] w-auto max-w-[34%] -translate-x-[30%] object-contain object-bottom transition-transform delay-150 duration-500 ease-out group-hover:-translate-y-1.5"
+              />
+            </>
+          ) : segunda ? (
             // Duas fotos: a primeira à esquerda e a segunda à frente, à direita.
             // O tamanho segue a altura do painel, então funciona em qualquer proporção.
             <>
