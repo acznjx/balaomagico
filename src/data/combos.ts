@@ -66,7 +66,7 @@ export const COMBOS = [
     nome: "Balão Mágico",
     itens: ["Super tobogã", "Piscina de bolinhas", "Cama elástica"],
     descricao: "O pacote completo de diversão para festas inesquecíveis.",
-    preco: 455,
+    preco: 470,
     fotos: [FOTO.superToboga, FOTO.camaElastica, FOTO.piscina],
     selo: "Mais vendido",
     destaque: true,
